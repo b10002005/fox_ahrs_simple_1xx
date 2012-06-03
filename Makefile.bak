@@ -1,0 +1,45 @@
+#CC =arm-linux-gnueabi-gcc
+CC=g++
+LFLAGS=-lrt
+OBJSTATIC=udpsocketlib.o
+OBJSTATICKALMAN=kalman/EKF.o kalman/EKF_data.o kalman/rt_backsubrr_dbl.o kalman/rt_forwardsubrr_dbl.o kalman/rtGetInf.o kalman/rtGetNaN.o kalman/rt_lu_real.o kalman/rt_matdivrr_dbl.o kalman/rt_matrixlib_dbl.o kalman/rt_nonfinite.o
+OBJSTATICMATH=math/simple_matrix.o 
+OBJSTATICIMU=IMU/iduec.o IMU/ultrasonic.o IMU/daisysette.o
+OBJSTATICPWM=pwm/ssc.o pwm/ssc32.o 
+OBJSTATIDINAMYCS=dinamycs/controll_law.o dinamycs/controll_law_data.o
+OBJSTATICONFIG= config/loadconf.o
+CFLAGS =-I. -g -Wall -Wunused -lm -lncurses -lconfig++
+
+SUBDIRS = 	IMU \
+		pwm \
+		math \
+		dinamycs \
+		config \
+		kalman
+
+all: dire static foxg20likeaquad 
+
+dire:	
+	list='$(SUBDIRS)'; \
+	for subdir in $$list; do \
+	  (cd $$subdir && $(MAKE)); \
+	done
+
+%.o: %.c $(DEPS)
+	$(CC) $(CFLAGS)  -c -o $@ $< 
+
+foxg20likeaquad: foxg20likeaquad.c 
+	$(CC) $(CFLAGS) $(LFLAGS)  $(OBJSTATIC) $(OBJSTATICKALMAN) $(OBJSTATIDINAMYCS) $(OBJSTATICMATH) $(OBJSTATICIMU) $(OBJSTATICPWM) $(OBJSTATICONFIG) foxg20likeaquad.c -o  foxg20likeaquad
+
+static: $(OBJSTATIC)
+	ar rcs libfoxlikeaquad.a $^
+	
+clean: 
+	rm -f foxg20likeaquad
+	rm -f *.o
+	rm -f libfoxlikeaquad.a
+	rm -f libfoxlikeaquad.so
+	list='$(SUBDIRS)'; \
+	for subdir in $$list; do \
+	  (cd $$subdir && $(MAKE) clean); \
+	done

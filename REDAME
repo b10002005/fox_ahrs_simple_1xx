@@ -1,0 +1,17 @@
+18122011_02
+	fixed yaw
+	add baro use and altitude
+28122011
+	fixed kalman
+	add complementar filter
+29122011
+	changed low pass filter
+31122011
+	fixed gps 
+	fixed complementar filter
+06012012
+	fixed code
+12012012
+	udp flush calibration process
+24012012
+	yaw clculation correction
